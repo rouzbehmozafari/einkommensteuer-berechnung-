@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITLE</title>
+    <link rel="stylesheet" href="assets/styles/style.css">
+    <style>
+        input , label {
+            display: block;
+        }
+        input, select {
+            margin-bottom: 3%;
+        }
+        #grundtarif , #splittingtarif {
+            font-weight: bold;
+            margin-bottom: 3%;
+        }
+        form  , div >*{
+            text-align: center;
+            background-color: rgb(223, 250, 250);
+            width: 50%;
+            margin: auto auto;
+            border-radius: 5%;
+        }
+        .arttext {
+            margin-top: 5%;
+            margin-bottom: 3%;
+            
+        }
+        form > * {
+            margin-left: auto ;
+            margin-right: auto;
+        }
+        p  {
+            border-bottom: white solid 1px;
+            padding-bottom: 3%;
+        }
+    </style>
+</head>
+<body>
+<!-- HEADER -->
+    <header>
+    </header>
+<!-- MAIN -->
+    <main>
+        <form action="" onchange="berechnen()" onsubmit="return false">
+            <label for="">Veranlagungsjahr</label>
+            <select name="" id="jahr">
+                <option value="2021">2021</option>
+                <option value="2020">2020</option>
+                <option value="2019">2019</option>
+            </select>
+            <label for="">zu versteuerndes Einkommen</label>
+            <input id="inp" type="number">
+            <div class="personen">
+                <label for="" class="arttext">Art der Veranlagung</label>
+                <input type="radio" name="art" id="ein"> Einzelveranlagung
+                <input type="radio" name="art" id="zwei"> Zusammenveranlagung
+            </div>
+
+            <h2>Ergebnis</h2>
+            <p>Grundtarif</p>
+            <p id="grundtarif"></p>
+            <p>Splittingtarif</p>
+            <p id="splittingtarif"></p>
+        </form>
+    </main>
+<!-- FOOTER -->
+    <footer>
+    </footer>
+<!-- SCRIPT -->
+    <script>
+        let grundtarif = document.getElementById('grundtarif')
+        let splittingtarif = document.getElementById('splittingtarif')
+        function berechnen() {
+            let jahr = (document.getElementById('jahr')).value
+            let ein = document.getElementById('ein')
+            let zwei = document.getElementById('zwei')
+            var zvE = Number(inp.value)
+            var ESt;
+            var y;
+            var z;
+            // 2021
+            if (zwei.checked) { 
+                zvE = zvE /2
+            }
+            if (jahr == 2021) {
+                if (zvE <= 9744) {
+                    ESt = 0;
+            }
+            // 2
+                else if (zvE >= 9745 && zvE <= 14753) {
+                    y = (zvE - 9744) / 10000
+                    ESt = ((995.21 *y) + 1400) * y
+            }
+            // 3
+                else if (zvE >= 14754 && zvE <= 57918) {
+                    z = (zvE - 14753) / 10000
+                    ESt = (((208.85 * z )+ 2397) * z) + 950.96
+                }
+            // 4
+                else if (zvE >= 57919 && zvE <= 274612) {
+                    ESt = (0.42 * zvE )- 9136.63;
+                }
+                else if ( zvE >= 274.613) {
+                    ESt = (0.45 * zvE )- 17374.99;
+                }
+            }
+            if (ein.checked) {
+                grundtarif.innerHTML = ESt;
+                splittingtarif.innerHTML = ' '  
+            }
+            else {
+                grundtarif.innerHTML = ' ';
+                splittingtarif.innerHTML = 2 * ESt     
+            }
+   
+        }
+
+    </script>
+</body>
+</html>
