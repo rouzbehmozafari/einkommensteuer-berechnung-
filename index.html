@@ -4,38 +4,61 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TITLE</title>
+    <title>Einkommensteuer­rechner</title>
     <link rel="stylesheet" href="assets/styles/style.css">
     <style>
-        input , label {
-            display: block;
-        }
-        input, select {
-            margin-bottom: 3%;
-        }
+        
         #grundtarif , #splittingtarif {
             font-weight: bold;
             margin-bottom: 3%;
+            color: green;
+            opacity: 0;
         }
-        form  , div >*{
+        form  {
             text-align: center;
             background-color: rgb(223, 250, 250);
             width: 50%;
             margin: auto auto;
-            border-radius: 5%;
+            border-radius: 20px;
+            padding: 3%;
         }
-        .arttext {
-            margin-top: 5%;
+
+        h1 {
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 3%;
+        }
+        
+        label  {
+            display: block;
+            color: green;
+            border-top: white 2px solid;
+            margin-top: 2%;
+            text-align: center;
+        }
+        .fl {
+            border-top: unset;
+        }
+        
+        #inp {
+            /* display: block; */
+            margin-bottom: 5%;
+            border-radius: 10px;
+            text-align: center;
+
+        }
+        h2 {
+            margin-top: 10%;
             margin-bottom: 3%;
-            
+            border-top: solid white 1px;
+            padding-top: 2%;
         }
-        form > * {
-            margin-left: auto ;
-            margin-right: auto;
+        #grundtarif {
+            margin-bottom: 5%;
         }
-        p  {
-            border-bottom: white solid 1px;
-            padding-bottom: 3%;
+
+        * {
+            line-height: 25px;
         }
     </style>
 </head>
@@ -45,26 +68,28 @@
     </header>
 <!-- MAIN -->
     <main>
+        <h1>Einkommensteuer­rechner</h1>
+
         <form action="" onchange="berechnen()" onsubmit="return false">
-            <label for="">Veranlagungsjahr</label>
+            <label class="fl" for="">Veranlagungsjahr</label>
             <select name="" id="jahr">
                 <option value="2021">2021</option>
                 <option value="2020">2020</option>
                 <option value="2019">2019</option>
             </select>
             <label for="">zu versteuerndes Einkommen</label>
-            <input id="inp" type="number">
+            <input id="inp" placeholder="  z.b 35,000" type="number">
             <div class="personen">
                 <label for="" class="arttext">Art der Veranlagung</label>
-                <input type="radio" name="art" id="ein"> Einzelveranlagung
-                <input type="radio" name="art" id="zwei"> Zusammenveranlagung
+                <div><input type="radio" name="art" id="ein"> Einzelveranlagung</div>
+                <div><input type="radio" name="art" id="zwei"> Zusammenveranlagung</div>
             </div>
 
             <h2>Ergebnis</h2>
             <p>Grundtarif</p>
-            <p id="grundtarif"></p>
+            <p id="grundtarif">0 €</p>
             <p>Splittingtarif</p>
-            <p id="splittingtarif"></p>
+            <p id="splittingtarif">0 €</p>
         </form>
     </main>
 <!-- FOOTER -->
@@ -74,18 +99,25 @@
     <script>
         let grundtarif = document.getElementById('grundtarif')
         let splittingtarif = document.getElementById('splittingtarif')
+        function separator(numb) {
+            var str = numb.toString().split(".");
+            str[0] = str[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return str.join(".");
+        }
         function berechnen() {
-            let jahr = (document.getElementById('jahr')).value
+            let jahr = Number((document.getElementById('jahr')).value)
             let ein = document.getElementById('ein')
             let zwei = document.getElementById('zwei')
+            let inp = document.getElementById('inp')
             var zvE = Number(inp.value)
             var ESt;
             var y;
             var z;
-            // 2021
+            
             if (zwei.checked) { 
                 zvE = zvE /2
             }
+            // 2021
             if (jahr == 2021) {
                 if (zvE <= 9744) {
                     ESt = 0;
@@ -104,21 +136,77 @@
                 else if (zvE >= 57919 && zvE <= 274612) {
                     ESt = (0.42 * zvE )- 9136.63;
                 }
+            // 5
                 else if ( zvE >= 274.613) {
                     ESt = (0.45 * zvE )- 17374.99;
                 }
             }
+            // 2020
+            if (jahr == 2020) {
+                if (zvE <= 9408) {
+                    ESt = 0;
+            }
+            // 2
+                else if (zvE >= 9409 && zvE <= 14532) {
+                    y = (zvE - 9408) / 10000
+                    ESt = ((972.87 *y) + 1400) * y
+            }
+            // 3
+                else if (zvE >= 14533 && zvE <= 57051) {
+                    z = (zvE - 14532) / 10000
+                    ESt = (((212.02 * z )+ 2397) * z) + 972.79
+                }
+            // 4
+                else if (zvE >= 57052 && zvE <= 270500) {
+                    ESt = (0.42 * zvE )- 8963.74;
+                }
+            // 5
+                else if ( zvE >= 270.501) {
+                    ESt = (0.45 * zvE )- 17078.74;
+                }
+            }
+            // 2019
+            else  {
+                if (zvE <= 9168) {
+                    ESt = 0;
+                }   
+            // 2
+                else if (zvE >= 9169 && zvE <= 14254) {
+                    y = (zvE - 9168) / 10000
+                    ESt = ((980.14 *y) + 1400) * y
+            }
+            // 3
+                else if (zvE >= 14255 && zvE <= 55960) {
+                    z = (zvE - 14254) / 10000
+                    ESt = (((216.16 * z )+ 2397) * z) + 965.58
+                }
+            // 4
+                else if (zvE >= 55961 && zvE <= 265326) {
+                    ESt = (0.42 * zvE )- 8780.90;
+                }
+            // 5
+                else if ( zvE >= 265.327) {
+                    ESt = (0.45 * zvE )- 16740.68;
+                }
+            }
+            ESt =  (ESt.toFixed(2))
+
             if (ein.checked) {
-                grundtarif.innerHTML = ESt;
-                splittingtarif.innerHTML = ' '  
+                grundtarif.innerHTML = separator(ESt) + ' €'
+                splittingtarif.innerHTML = '---'  
+                grundtarif.style.transition = '2s'
+                grundtarif.style.opacity = '1'
+                splittingtarif.style.opacity = '0'
             }
             else {
-                grundtarif.innerHTML = ' ';
-                splittingtarif.innerHTML = 2 * ESt     
+                grundtarif.innerHTML = '---';
+                splittingtarif.innerHTML = separator(2 * ESt ) + ' €'    
+                splittingtarif.style.transition = '2s'
+                splittingtarif.style.opacity = '1'
+                grundtarif.style.opacity = '0'
             }
-   
-        }
 
+        }
     </script>
 </body>
 </html>
